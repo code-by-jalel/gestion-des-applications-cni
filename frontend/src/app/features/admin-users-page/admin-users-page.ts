@@ -4,10 +4,13 @@ import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } 
 import { UserService, UserDto } from '../../services/user-service/user.service';
 import { organisationDto, OrganisationService } from '../../services/organisation-service/organisation.service';
 import { AuthService } from '../../services/auth-service';
+import { TuiCheckbox } from '@taiga-ui/core';
+import { GroupService } from '../../services/group-service/group.service';
+import { Observable,forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-admin-users-page',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TuiCheckbox],
   templateUrl: './admin-users-page.html',
   styleUrl: './admin-users-page.scss'
 })
@@ -25,19 +28,23 @@ export class AdminUsersPage implements OnInit {
     mail: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     o: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    telephoneNumber: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] })
+    telephoneNumber: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    ROLE_ADMINSGROUP: new FormControl<boolean>(false, { nonNullable: true }),
+    ROLE_GESTIONNAIREUTILISATEURS: new FormControl<boolean>(false, { nonNullable: true }),
+    ROLE_GESTIONNAIREORGANISATION: new FormControl<boolean>(false, { nonNullable: true })
   });
   message = '';
   showDetailsB: string | null = null;
   nextCookie: string | null = null;
   pageSize = 10;
-  roles:String[] = [];
+  roles: String[] = [];
 
   constructor(
     private userService: UserService,
     private cdr: ChangeDetectorRef,
     private organisationService: OrganisationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private groupService: GroupService
   ) { }
 
   ngOnInit() {
@@ -49,7 +56,7 @@ export class AdminUsersPage implements OnInit {
         this.cdr.markForCheck();
       }
     })
-    this.roles=this.authService.getRoles();
+    this.roles = this.authService.getRoles();
   }
   loadUsers(reset = true) {
     if (reset) {
@@ -76,19 +83,7 @@ export class AdminUsersPage implements OnInit {
   loadMore() {
     this.loadUsers(false);
   }
-  // loadUsers() {
-  //   this.userService.listUsers().subscribe({
-  //     next: users => {
-  //       this.users = users;
-  //       this.cdr.markForCheck();
-  //     },
-  //     error: err => {
-  //       console.error('Failed to load users:', err);
-  //       this.message = `Failed to load users: ${err.status} ${err.statusText}`;
-  //       this.cdr.markForCheck();
-  //     }
-  //   });
-  // }
+
   showDetails(user: UserDto) {
     this.showDetailsB = user.uid
   }
@@ -96,7 +91,7 @@ export class AdminUsersPage implements OnInit {
   startEdit(user: UserDto) {
     this.editingUid = user.uid;
     this.editForm = { cn: user.cn, sn: user.sn, mail: user.mail ?? '', o: user.o ?? '' };
-    this.userForm.setValue({
+    /* this.userForm.setValue({
       uid: user.uid,
       sn: user.sn,
       givenName: user.givenName,
@@ -104,7 +99,7 @@ export class AdminUsersPage implements OnInit {
       o: user.o,
       telephoneNumber: user.telephoneNumber,
       password: ''
-    });
+    }); */
   }
 
   cancelEdit() {
@@ -112,7 +107,7 @@ export class AdminUsersPage implements OnInit {
   }
 
   saveEdit(uid: string) {
-    const { password, ...userData } = this.userForm.getRawValue();
+    const { password, ROLE_ADMINSGROUP, ROLE_GESTIONNAIREORGANISATION, ROLE_GESTIONNAIREUTILISATEURS, ...userData } = this.userForm.getRawValue();
     this.userService.updateUser(uid, userData).subscribe({
       next: () => {
         this.message = 'User updated';
@@ -141,30 +136,42 @@ export class AdminUsersPage implements OnInit {
   userCount = "5";
   toggleCreateForm() {
     this.showCreateForm = !this.showCreateForm;
-    /* this.userForm.patchValue({
-      uid: "user" + this.userCount,
-      sn: "u",
-      givenName: this.userCount,
-      password: "1234",
-      mail: "user" + this.userCount + "@gmail.com",
-      telephoneNumber: "88888888",
-      o: "مستشفى الرابطة"
-    }) */
   }
 
   createUser() {
     if (this.userForm.invalid) {
       return;
     }
+    const { ROLE_ADMINSGROUP, ROLE_GESTIONNAIREUTILISATEURS, ROLE_GESTIONNAIREORGANISATION, ...userData } = this.userForm.getRawValue();
+    const rolesUser:Observable<any>[] = [];
 
-    this.userService.createUser(this.userForm.getRawValue()).subscribe({
+    if (ROLE_ADMINSGROUP) {
+      rolesUser.push(this.groupService.addMember("adminsGroup", userData.uid));
+    }
+
+    if (ROLE_GESTIONNAIREORGANISATION) {
+      rolesUser.push(this.groupService.addMember("GestionnaireOrganisation", userData.uid));
+    }
+
+    if (ROLE_GESTIONNAIREUTILISATEURS) {
+      rolesUser.push(this.groupService.addMember("GestionnaireUtilisateurs", userData.uid));
+    }
+
+    this.userService.createUser(userData).subscribe({
       next: () => {
-        this.message = 'Utilisateur crée';
-        this.userForm.reset();
-        this.showCreateForm = false;
-        this.loadUsers();
-        this.userCount = (parseInt(this.userCount) + 1).toString();
-        this.cdr.markForCheck();
+        forkJoin(rolesUser).subscribe({
+          next: () => {
+            this.message = 'Utilisateur créé';
+            this.userForm.reset();
+            this.showCreateForm = false;
+            this.loadUsers();
+            this.userCount = (parseInt(this.userCount) + 1).toString();
+            this.cdr.markForCheck();
+          },
+          error: err => {
+            console.error("Failed adding roles", err);
+          }
+        });
       },
       error: err => {
         this.message = err.error?.error;

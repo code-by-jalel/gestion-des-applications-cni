@@ -23,6 +23,7 @@ import javax.naming.directory.ModificationItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
@@ -68,6 +69,11 @@ public class GroupService {
                 }
         );
     }
+    private static final Set<String> EXCLUDED_GROUPS = Set.of(
+            "adminsGroup",
+            "GestionnaireUtilisateurs",
+            "GestionnaireOrganisation"
+    );
     public List<GroupDto> listGroups() {
         return ldapTemplate.search(
                 query().base("ou=groups").where("objectclass").is("groupOfNames"),
@@ -89,7 +95,9 @@ public class GroupService {
 
                     return new GroupDto(cn,members);
                 }
-        );
+        ).stream()
+                .filter(group -> !EXCLUDED_GROUPS.contains(group.cn()))
+                .toList();
     }
     /* public List<GroupDto> listGroups() {
         return ldapTemplate.search(
