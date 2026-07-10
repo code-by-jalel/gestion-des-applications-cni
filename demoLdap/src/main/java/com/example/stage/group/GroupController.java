@@ -29,9 +29,8 @@ public class GroupController {
         return groupService.listGroups();
     }*/
     @GetMapping
-    public List<GroupDto> listGroups(HttpServletRequest request){
-        String adminStructure = (String) request.getAttribute("structure");
-        return groupService.listGroupsByStructure(adminStructure);
+    public List<GroupDto> listGroups(){
+        return groupService.listGroups();
     }
     @PostMapping
     public ResponseEntity<?> createGroup(@RequestBody CreateGroupRequest request) {
