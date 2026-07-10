@@ -1,0 +1,73 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss";
+
+:root {
+    /** Text colors */
+    --primary-text-color: #262626;
+    --secondary-text-color: #565656;
+    --primary-subtitle-color: #8C8C8C;
+
+    /** Background colors */
+    --background-color: #E8ECF1;
+    --secondary-background-color: #0D2A3A;
+
+    /** Primary & Secondary colors */
+    --primary-color: #07839B;
+    --secondary-color: #FFFFFF;
+
+    /** Card colors */
+    --card-color: #FFFFFF;
+    --border-color: #F0F0F0;
+
+    /** Font families */
+    --font-lato: 'Lato', sans-serif;
+    --font-rubik: 'Rubik', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+    --font-family-base: var(--font-lato);
+}
+
+* {
+    /*margin: 0;
+    padding: 0;*/
+    scroll-behavior: smooth;
+}
+
+body {
+    /** Global styles for the entire application */
+    font-family: var(--font-family-base);
+    color: var(--primary-text-color);
+    background-color: var(--background-color);
+}
+
+
+.font-rubik {
+    font-family: var(--font-rubik);
+}
+
+.title {
+    font-family: var(--font-rubik);
+    color: #262626;
+    font-size: 40px;
+    font-weight: 500;
+}
+
+.subtitle {
+    font-family: var(--font-lato);
+    font-size: 20px;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--secondary-text-color);
+}
+
+.horizontal-div {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+}
+
+.vertical-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

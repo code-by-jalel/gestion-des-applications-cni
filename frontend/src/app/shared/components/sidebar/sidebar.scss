@@ -1,0 +1,19 @@
+
+.menu-item-active {
+    background-color: #EBF5F7 !important;
+    border-left-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+.submenu-open {
+    max-height: 200px !important;
+}
+
+.chevron-open {
+    transform: rotate(0deg) !important;
+}
+
+.submenu-item-active {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}

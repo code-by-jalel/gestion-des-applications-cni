@@ -1,0 +1,157 @@
+<div class="max-w-7xl mx-auto p-6 space-y-6">
+  <header class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h2 class="text-3xl font-semibold text-slate-900 mt-2">Applications</h2>
+
+    </div>
+
+    <button
+      (click)="toggleCreateForm()"
+      class="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition"
+      [class]="showCreateForm
+        ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+        : 'bg-slate-900 text-white hover:bg-slate-800'">
+      {{ showCreateForm ? 'Fermer' : '+ Nouveau groupe' }}
+    </button>
+  </header>
+
+  @if (message) {
+    <div
+      class="rounded-2xl border px-4 py-3 text-sm shadow-sm"
+      [class]="messageType === 'success'
+        ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+        : 'border-red-200 bg-red-50 text-red-700'">
+      {{ message }}
+    </div>
+  }
+
+
+
+  @if (showCreateForm) {
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0px_2px_15px_0px_rgba(0,0,0,0.08)]">
+      <div class="mb-5 flex items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Nouveau groupe</h3>
+          <p class="mt-2 text-sm text-slate-500">Crée un groupe et renseigne le premier membre si nécessaire.</p>
+        </div>
+      </div>
+
+      <form [formGroup]="newGroup" (ngSubmit)="createGroup()">
+        <div class="grid gap-3 md:grid-cols-2">
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-slate-500">Nom du groupe (cn)</span>
+            <input
+              formControlName="cn"
+              placeholder="ex: developers"
+              class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+          </label>
+
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-slate-500">Membre initial (uid)</span>
+            <input
+              formControlName="initialMemberUid"
+              placeholder="ex: jalel"
+              class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+          </label>
+
+          <div class="md:col-span-2">
+            <p class="mb-2 text-xs font-medium text-slate-500">Rôles du groupe</p>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                <input tuiCheckbox type="checkbox" formControlName="ROLE_ADMINSGROUP" class="h-4 w-4 rounded border-slate-300 text-slate-800 focus:ring-slate-400" />
+                ROLE_ADMINSGROUP
+              </label>
+              <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                <input tuiCheckbox type="checkbox" formControlName="ROLE_GESTIONNAIREUTILISATEURS" class="h-4 w-4 rounded border-slate-300 text-slate-800 focus:ring-slate-400" />
+                ROLE_GESTIONNAIREUTILISATEURS
+              </label>
+              <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                <input tuiCheckbox type="checkbox" formControlName="ROLE_GESTIONNAIREORGANISATION" class="h-4 w-4 rounded border-slate-300 text-slate-800 focus:ring-slate-400" />
+                ROLE_GESTIONNAIREORGANISATION
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-4 text-xs text-slate-400">Un groupe LDAP nécessite au moins un membre à la création.</p>
+        <button
+          type="submit"
+          [disabled]="newGroup.invalid"
+          class="mt-4 inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40">
+          Créer le groupe
+        </button>
+      </form>
+    </div>
+  }
+
+  <section class="rounded-3xl border border-slate-200 bg-white shadow-[0px_2px_15px_0px_rgba(0,0,0,0.08)]">
+    <div class="flex flex-col gap-4 border-b border-slate-200 px-5 py-5 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-slate-900">Membres des applications</h3>
+
+      </div>
+
+      <label class="w-full lg:max-w-xl">
+        <span class="sr-only"></span>
+        <input
+          type="search"
+          [(ngModel)]="searchText"
+          placeholder="Rechercher un groupe, un prénom, un nom ou une organisation..."
+          class="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+      </label>
+    </div>
+
+    <div class="max-h-[70vh] overflow-auto">
+      <table class="min-w-full border-separate border-spacing-0">
+        <thead class="sticky top-0 z-10 bg-slate-50/95 backdrop-blur">
+          <tr class="text-left text-xs uppercase tracking-[0.2em] text-slate-500">
+            <th class="border-b border-slate-200 px-5 py-3 font-semibold">Groupe</th>
+            <th class="border-b border-slate-200 px-5 py-3 font-semibold">Prénom</th>
+            <th class="border-b border-slate-200 px-5 py-3 font-semibold">Nom</th>
+            <th class="border-b border-slate-200 px-5 py-3 font-semibold">Organisation</th>
+            <th class="border-b border-slate-200 px-5 py-3 text-right font-semibold">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredMemberRows.length === 0) {
+            <tr>
+              <td colspan="5" class="px-5 py-16 text-center text-sm text-slate-400">
+                Aucun membre ne correspond à la recherche.
+              </td>
+            </tr>
+          } @else {
+            @for (row of filteredMemberRows; track row.key) {
+              <tr class="transition hover:bg-slate-50/80">
+                <td class="border-b border-slate-100 px-5 py-4 align-top">
+                  <div class="font-medium text-slate-900">{{ row.groupCn }}</div>
+                  <div class="mt-1 text-xs text-slate-400">Membre: {{ row.memberUid }}</div>
+                </td>
+                <td class="border-b border-slate-100 px-5 py-4 align-top text-sm text-slate-700">{{ row.firstName }}</td>
+                <td class="border-b border-slate-100 px-5 py-4 align-top text-sm text-slate-700">{{ row.lastName }}</td>
+                <td class="border-b border-slate-100 px-5 py-4 align-top text-sm text-slate-700">
+                  <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                    {{ row.organisation }}
+                  </span>
+                </td>
+                <td class="border-b border-slate-100 px-5 py-4 align-top text-right">
+                  <button
+                    type="button"
+                    (click)="deleteGroup(row.groupCn)"
+                    class="inline-flex items-center justify-center rounded-full bg-slate-100 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-200 mr-2">
+                    Supprimer le groupe
+                  </button>
+                  <button
+                    type="button"
+                    (click)="removeMember(row.groupCn, row.memberUid)"
+                    class="inline-flex items-center justify-center rounded-full bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-100">
+                    Supprimer le membre
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,116 @@
+#body{
+    width: 100vw; 
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    gap: 10vw;
+}
+.card{
+    width: 500px;
+    height: 300px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: -5px 10px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    padding: 2%;
+}
+#div1{
+    color: var(--primary-text-color);
+    font-family: var(--font-rubik);
+    font-weight: 400;
+    font-size: 170%;
+}
+#div2{
+    color: var(--secondary-text-color);    
+}
+#button1{
+    border: #C9C9C9 solid 1px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 100%;
+    padding: 2%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+#parent1{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--secondary-text-color);
+    font-family: var(--font-lato);
+}
+#parent1 hr {
+    flex: 1;
+    border: none;
+    height: 1px;
+    background-color: rgba(0,0,0,0.1);
+}
+#div3,#pass {
+    font-weight: 410;
+    font-family: var(--font-rubik);
+    color: var(--primary-text-color);
+}
+input{
+    border: #C9C9C9 solid 1px;
+    border-radius: 10px;
+    padding: 2.2%;
+    padding-left: 2.5%;
+    width: 100%;
+}
+#parent2{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5%;
+}
+#for{
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+}
+#button2{
+    width: 169px;
+    background-color: #0F2A3F;
+    color: white;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-left: 30%;
+    padding-top: 2.5%;
+    padding-bottom: 2.5%;
+    padding-left: 8.5%;
+    padding-right: 8.5%;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 3%;
+    align-self: end;
+}
+#parent3{
+    display: flex;
+    justify-content: row;
+    gap: 8px;
+    font-size: 110%;
+    font-weight: 400;
+    margin-top: 3%;
+    margin-left: 14%;
+}
+#button1 svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+#pdiv2{
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+}
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}

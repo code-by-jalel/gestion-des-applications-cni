@@ -1,0 +1,78 @@
+<div class="bg-white min-h-full flex flex-col justify-start items-stretch gap-6 p-4">
+
+    <!-- Logo -->
+    <div class="flex justify-start items-center">
+        <a routerLink="/" class="no-underline cursor-pointer">
+            <div class="flex gap-2 items-center">
+                <img src="/image.png" class="w-[150px] h-[100px]" />
+            </div>
+        </a>
+    </div>
+
+    <div class="text-[20px] font-[family-name:var(--font-lato)] text-[var(--primary-subtitle-color)]">Menu</div>
+
+    <div class="flex flex-col justify-start gap-2">
+        @if(roles.includes("ROLE_ADMINSGROUP") || roles.includes("ROLE_GESTIONNAIREUTILISATEURS")){
+        <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
+            routerLink="dashboard" routerLinkActive="menu-item-active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chart-pie-icon lucide-chart-pie">
+                <path
+                    d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z" />
+                <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+            </svg>
+
+            <span class="font-[family-name:var(--font-lato)] text-[16px] font-semibold flex-1" routerLink="dashboard"
+                (click)="onclick()">Tableau de bord</span>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
+            routerLink="admin/users" routerLinkActive="menu-item-active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span class="font-[family-name:var(--font-lato)] text-[16px] font-semibold flex-1" routerLink="admin/users"
+                (click)="onclick()">Utilisateurs</span>
+        </div>
+        }
+        @if(roles.includes("ROLE_ADMINSGROUP")){
+        <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
+            routerLink="admin/groups" routerLinkActive="menu-item-active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-users-icon lucide-users">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <circle cx="9" cy="7" r="4" />
+            </svg>
+            <span class="font-[family-name:var(--font-lato)] text-[16px] font-semibold flex-1">Applications</span>
+        </div>
+        }
+        @if(roles.includes("ROLE_ADMINSGROUP") || roles.includes("ROLE_GESTIONNAIREORGANISATION")){
+
+        <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
+            routerLink="admin/organisations" routerLinkActive="menu-item-active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-building2-icon lucide-building-2">
+                <path d="M10 12h4" />
+                <path d="M10 8h4" />
+                <path d="M14 21v-3a2 2 0 0 0-4 0v3" />
+                <path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" />
+                <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" />
+            </svg>
+            <span class="font-[family-name:var(--font-lato)] text-[16px] font-semibold flex-1">Organisations</span>
+        </div>
+        }
+        <!-- <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
+            routerLink="admin/organisations" routerLinkActive="menu-item-active">
+            
+            <span class="font-[family-name:var(--font-lato)] text-[16px] font-semibold flex-1"
+                >Logout</span>
+        </div> -->
+    </div>
+    <button class="w-[250px] bg-[#0F2A3F] text-white font-medium py-[2.5%] px-[8.5%] rounded-[10px] cursor-pointer self-end mt-auto" (click)="logout()">Se déconnecter</button>
+</div>

@@ -1,0 +1,191 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
+import { UserService, UserDto } from '../../services/user-service/user.service';
+import { organisationDto, OrganisationService } from '../../services/organisation-service/organisation.service';
+import { AuthService } from '../../services/auth-service';
+
+@Component({
+  selector: 'app-admin-users-page',
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './admin-users-page.html',
+  styleUrl: './admin-users-page.scss'
+})
+export class AdminUsersPage implements OnInit {
+  users: UserDto[] = [];
+  organisations: organisationDto[] = [];
+  editingUid: string | null = null;
+  editForm = { cn: '', sn: '', mail: '', o: '' };
+  searchText = '';
+  filteredUsers = [...this.users];
+  userForm = new FormGroup({
+    uid: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    sn: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    givenName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    mail: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    o: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    telephoneNumber: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] })
+  });
+  message = '';
+  showDetailsB: string | null = null;
+  nextCookie: string | null = null;
+  pageSize = 10;
+  roles:String[] = [];
+
+  constructor(
+    private userService: UserService,
+    private cdr: ChangeDetectorRef,
+    private organisationService: OrganisationService,
+    private authService: AuthService
+  ) { }
+
+  ngOnInit() {
+
+    this.loadUsers();
+    this.organisationService.listOrganisations().subscribe({
+      next: organisations => {
+        this.organisations = organisations;
+        this.cdr.markForCheck();
+      }
+    })
+    this.roles=this.authService.getRoles();
+  }
+  loadUsers(reset = true) {
+    if (reset) {
+      this.users = [];
+      this.nextCookie = null;
+    }
+
+    this.userService.listUsersPaged(this.pageSize, this.nextCookie ?? undefined, this.searchText).subscribe({
+      next: res => {
+        this.users = reset ? res.items : [...this.users, ...res.items];
+        this.nextCookie = res.nextPageCookie;
+        this.filteredUsers = [...this.users];
+        this.cdr.markForCheck();
+      },
+      error: err => {
+        this.message = `Failed to load users: ${err.status}`;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+  search() {
+    this.loadUsers();
+  }
+  loadMore() {
+    this.loadUsers(false);
+  }
+  // loadUsers() {
+  //   this.userService.listUsers().subscribe({
+  //     next: users => {
+  //       this.users = users;
+  //       this.cdr.markForCheck();
+  //     },
+  //     error: err => {
+  //       console.error('Failed to load users:', err);
+  //       this.message = `Failed to load users: ${err.status} ${err.statusText}`;
+  //       this.cdr.markForCheck();
+  //     }
+  //   });
+  // }
+  showDetails(user: UserDto) {
+    this.showDetailsB = user.uid
+  }
+  // uid sn givenName mail mail o telephoneNumber
+  startEdit(user: UserDto) {
+    this.editingUid = user.uid;
+    this.editForm = { cn: user.cn, sn: user.sn, mail: user.mail ?? '', o: user.o ?? '' };
+    this.userForm.setValue({
+      uid: user.uid,
+      sn: user.sn,
+      givenName: user.givenName,
+      mail: user.mail,
+      o: user.o,
+      telephoneNumber: user.telephoneNumber,
+      password: ''
+    });
+  }
+
+  cancelEdit() {
+    this.editingUid = null;
+  }
+
+  saveEdit(uid: string) {
+    const { password, ...userData } = this.userForm.getRawValue();
+    this.userService.updateUser(uid, userData).subscribe({
+      next: () => {
+        this.message = 'User updated';
+        this.editingUid = null;
+        this.loadUsers();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.message = err.error?.error;
+        // console.log(this.message);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  resetPassword(uid: string) {
+    const newPassword = prompt(`New password for ${uid}:`);
+    if (!newPassword) return;
+
+    this.userService.resetPassword(uid, newPassword).subscribe({
+      next: () => this.message = `Password reset for ${uid}`,
+      error: () => this.message = 'Failed to reset password'
+    });
+  }
+  showCreateForm = false;
+  userCount = "5";
+  toggleCreateForm() {
+    this.showCreateForm = !this.showCreateForm;
+    /* this.userForm.patchValue({
+      uid: "user" + this.userCount,
+      sn: "u",
+      givenName: this.userCount,
+      password: "1234",
+      mail: "user" + this.userCount + "@gmail.com",
+      telephoneNumber: "88888888",
+      o: "مستشفى الرابطة"
+    }) */
+  }
+
+  createUser() {
+    if (this.userForm.invalid) {
+      return;
+    }
+
+    this.userService.createUser(this.userForm.getRawValue()).subscribe({
+      next: () => {
+        this.message = 'Utilisateur crée';
+        this.userForm.reset();
+        this.showCreateForm = false;
+        this.loadUsers();
+        this.userCount = (parseInt(this.userCount) + 1).toString();
+        this.cdr.markForCheck();
+      },
+      error: err => {
+        this.message = err.error?.error;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  deleteUser(uid: string) {
+    if (!confirm(`Delete user ${uid}? This cannot be undone.`)) return;
+
+    this.userService.deleteUser(uid).subscribe({
+      next: () => {
+        this.message = `Utilisateur ${uid} supprimé`;
+        this.loadUsers();
+        this.cdr.markForCheck();
+      },
+      error: err => {
+        this.message = `Failed to delete user: ${err.status}`;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+}

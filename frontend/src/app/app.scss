@@ -1,0 +1,29 @@
+/* Header stays fixed at top of content column */
+app-header {
+    position: sticky;
+    z-index: 2999;
+    width: 100%;
+    top: 0;
+    flex-shrink: 0;
+}
+
+/* Sidebar scrolls independently, scrollbar hidden */
+app-sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;           /* Firefox */
+    -ms-overflow-style: none;        /* IE/Edge */
+}
+app-sidebar::-webkit-scrollbar {
+    display: none;                   /* Chrome/Safari */
+}
+
+/* Content area below header fills remaining space */
+router-outlet + * {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+tui-root{
+    --tui-background-base: var(--background-color);
+}

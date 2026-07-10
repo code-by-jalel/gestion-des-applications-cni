@@ -1,0 +1,25 @@
+<div id="body">
+    <div class="card">
+        <div class="flex">
+            <img src="/image.png" class="w-[80px] h-[50px] ml-[-5px]" />
+            <div id="div1" class="justify-center ml-[15%]">Se connecter</div>
+            
+        </div>
+        <form [formGroup]="userForm" (ngSubmit)="submit()">
+            <div id="div3">Email</div>
+            <input formControlName="email" type="text" placeholder="you@example.com">
+
+            <div id="parent2">
+                <div id="pass">Mot de passe</div>
+            </div>
+            <input formControlName="password" type="password" placeholder="Entrer votre mot de passe">
+            <div>
+                @if (errorMessage) {
+                <div class="error">{{ errorMessage }}</div>
+                }
+                <button id="button2" type="submit">Se connecter</button>
+                <button id="button2" type="submit" (click)="jalelButton()">Se connecter as jalel</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,140 @@
+<div class="max-w-4xl mx-auto p-6">
+  @if (roles.includes("ROLE_ADMINSGROUP")) {
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-semibold text-slate-800">Gestion des utilisateurs</h2>
+    <button (click)="toggleCreateForm()"
+      class="px-4 py-2 rounded-full bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition">
+      {{ showCreateForm ? 'Annuler' : '+ Ajouter' }}
+    </button>
+  </div>
+  }
+  @if (message) {
+  <div class="mb-4 px-4 py-3 rounded-xl bg-amber-50 text-amber-800 text-sm border border-amber-200">
+    {{ message }}
+  </div>
+  }
+  <div class="mb-6">
+    <input type="text" placeholder="Rechercher un utilisateur..." [(ngModel)]="searchText" (input)="search()"
+      class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+  </div>
+  @if (showCreateForm) {
+  <form [formGroup]="userForm" (ngSubmit)="createUser()">
+
+    <div class="bg-white rounded-2xl p-6 shadow-[0px_2px_15px_0px_rgba(0,0,0,0.08)] mb-6">
+      <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4">Nouveau utilisateur</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <input placeholder="Username" formControlName="uid"
+          class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+        <input placeholder="Password" type="password" formControlName="password"
+          class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+        <input placeholder="First name" formControlName="sn"
+          class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+        <input placeholder="Last name" formControlName="givenName"
+          class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+        <input placeholder="Email" formControlName="mail"
+          class="col-span-2 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+        <!-- <input placeholder="organisation" formControlName="o"
+          class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" /> -->
+        <select formControlName="o">
+          <option value="">Selectioner une organisation</option>
+          <option *ngFor="let r of organisations" [value]="r.description">
+            {{ r.description }}
+          </option>
+        </select>
+        <input placeholder="Telephone" formControlName="telephoneNumber"
+          class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+
+      </div>
+      <button type="submit"
+        class="mt-4 px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition">
+        Create user
+      </button>
+    </div>
+  </form>
+  }
+  <div class="flex flex-col gap-3">
+    @for (user of filteredUsers; track user.uid) {
+    <div class="bg-white rounded-2xl p-5 shadow-[0px_2px_15px_0px_rgba(0,0,0,0.06)] flex items-center gap-4"
+      (click)="showDetails(user)">
+      <div
+        class="w-11 h-11 rounded-full bg-slate-800 text-white flex items-center justify-center font-semibold text-sm shrink-0">
+        {{ user.cn.charAt(0) }}{{ user.sn.charAt(0) }}
+      </div>
+      @if (editingUid === user.uid) {
+      <form [formGroup]="userForm" (ngSubmit)="saveEdit(user.uid)">
+        <div class="bg-white rounded-2xl p-6 shadow-[0px_2px_15px_0px_rgba(0,0,0,0.08)] mb-6">
+          <div class="grid grid-cols-2 gap-4">
+            <input placeholder="First name" formControlName="sn"
+              class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+            <input placeholder="Last name" formControlName="givenName"
+              class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+            <input placeholder="Email" formControlName="mail"
+              class="col-span-2 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+            <select formControlName="o" class="mb-4">
+              <option value="">Selectioner une organisation</option>
+              <option *ngFor="let r of organisations" [value]="r.description">
+                {{ r.description }}
+              </option>
+            </select>
+            <input placeholder="Telephone" formControlName="telephoneNumber"
+              class="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+          </div>
+          <button type="submit"
+            class="px-3 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-medium hover:bg-emerald-700 transition">
+            Save
+          </button>
+          <button (click)="cancelEdit()"
+            class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition">
+            Cancel
+          </button>
+        </div>
+      </form>
+      } @else {
+      <div class="flex-1 min-w-0 flex-col">
+        <p class="font-medium text-slate-800 truncate">{{ user.cn }}</p>
+        <div class="flex flex-col gap-1">
+          @if (showDetailsB === user.uid) {
+          <p class="text-sm text-slate-500 truncate m-[5px]">Uid : @{{ user.uid }}</p>
+          <p class="text-sm text-slate-500 truncate m-[5px]">sn : {{ user.sn}} </p>
+          <p class="text-sm text-slate-500 truncate m-[5px]">givenName : {{ user.givenName }}</p>
+          <p class="text-sm text-slate-500 truncate m-[5px]">Email : {{ user.mail || 'No email set' }} </p>
+          <p class="text-sm text-slate-500 truncate m-[5px]">Organisation : {{ user.o }}</p>
+          <p class="text-sm text-slate-500 truncate m-[5px]">Telephone : {{ user.telephoneNumber }}</p>
+          }
+        </div>
+      </div>
+
+
+      <div class="flex gap-2 shrink-0">
+        <button (click)="startEdit(user)"
+          class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition">
+          Modifier
+        </button>
+        <button (click)="resetPassword(user.uid)"
+          class="px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition">
+          Réinitialisation MDP
+        </button>
+        @if (roles.includes("ROLE_ADMINSGROUP")) {
+        <button (click)="deleteUser(user.uid)"
+          class="px-3 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-medium hover:bg-red-100 transition">
+          Supprimer
+        </button>
+        }
+      </div>
+      }
+    </div>
+    } @empty {
+    <div class="text-center py-12 text-slate-400 text-sm">
+      No users found.
+    </div>
+    }
+  </div>
+  @if (nextCookie) {
+  <div class="flex justify-center mt-4">
+    <button (click)="loadMore()"
+      class="px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition">
+      Load more
+    </button>
+  </div>
+  }
+</div>
