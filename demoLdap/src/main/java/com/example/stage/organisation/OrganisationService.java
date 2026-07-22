@@ -9,11 +9,8 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import javax.naming.directory.SearchControls;
+import java.util.*;
 
 import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
@@ -27,6 +24,26 @@ public class OrganisationService {
     public OrganisationService(LdapTemplate ldapTemplate,AuthenticationManager authenticationManager){
         this.ldapTemplate = ldapTemplate;
         this.authenticationManager = authenticationManager;
+    }
+    public Set<String> listAllOrganisationsParentOnly(){
+        Set<String> setOrg =new HashSet<>();
+        ldapTemplate.search(
+                query()
+                        .base("ou=Tunisie,ou=structures")
+                        .searchScope(SearchScope.ONELEVEL)
+                        .where("objectclass").isPresent(),
+                (AttributesMapper<Void>) attrs->{
+                    String ou = attrs.get("ou") != null ? attrs.get("ou").get().toString() : null;
+                    if (ou != null) {
+                        setOrg.add(ou);
+                    }
+                    return null;
+                }
+        );
+        return setOrg;
+    }
+    public Map<String,String> listAllOrgnisations(){
+        return listOrganizations("",false);
     }
     public Map<String, String> listOrganizations(boolean reverse) {
         return listOrganizations("", reverse);
@@ -42,6 +59,7 @@ public class OrganisationService {
                 (ContextMapper<String>) ctx -> ((DirContextAdapter) ctx).getDn().toString()
         );
     }
+
     public Map<String, String> listOrganizations(String structureOu, boolean reverse) {
         Map<String, String> orgDescription = new HashMap<>();
 
@@ -74,7 +92,13 @@ public class OrganisationService {
     }
 
     public List<OrganisationDto> getTree(String adminStructure, String search) {
-        String structureString = structurePath(adminStructure).get(0);
+        String structureString;
+        if(adminStructure.isEmpty()){
+            structureString="ou=Tunisie,ou=structures";
+        }else{
+            structureString= structurePath(adminStructure).get(0);
+        }
+
         List<OrganisationDto> roots = ldapTemplate.search(
                 query()
                         .base(structureString).where("ou").is(adminStructure),
@@ -99,6 +123,31 @@ public class OrganisationService {
                 .toList();
     }
 
+    public List<OrganisationDto> getAllOrganisationTree() {
+
+        return ldapTemplate.search(
+                query()
+                        .base("ou=Tunisie,ou=structures")
+                        .searchScope(SearchScope.ONELEVEL)
+                        .where("objectclass").is("organizationalUnit"),
+                (ContextMapper<OrganisationDto>) ctx -> {
+                    DirContextOperations dirCtx = (DirContextOperations) ctx;
+
+                    String ou = dirCtx.getStringAttribute("ou");
+                    String description = dirCtx.getStringAttribute("description");
+                    String dn = dirCtx.getDn().toString();
+
+                    List<OrganisationDto> children = buildChildren(dn);
+
+                    return new OrganisationDto(
+                            ou,
+                            description,
+                            dn,
+                            children
+                    );
+                }
+        );
+    }
     private OrganisationDto filterTree(OrganisationDto node, String search) {
         List<OrganisationDto> matchingChildren = node.children().stream()
                 .map(child -> filterTree(child, search))
@@ -116,6 +165,19 @@ public class OrganisationService {
         return containsIgnoreCase(node.ou(), search) || containsIgnoreCase(node.description(), search);
     }
 
+    public Set<String> flattenOrganisations(List<OrganisationDto> organisations) {
+        Set<String> result = new HashSet<>();
+
+        for (OrganisationDto org : organisations) {
+            result.add(org.ou());
+
+            if (org.children() != null && !org.children().isEmpty()) {
+                result.addAll(flattenOrganisations(org.children()));
+            }
+        }
+
+        return result;
+    }
     private boolean containsIgnoreCase(String value, String search) {
         return value != null && value.toLowerCase(Locale.ROOT).contains(search);
     }

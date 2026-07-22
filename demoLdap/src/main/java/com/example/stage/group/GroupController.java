@@ -22,12 +22,6 @@ public class GroupController {
     public GroupController(GroupService groupService) {
         this.groupService = groupService;
     }
-
-    /*
-    @GetMapping
-    public List<GroupDto> listGroups() {
-        return groupService.listGroups();
-    }*/
     @GetMapping
     public List<GroupDto> listGroups(){
         return groupService.listGroups();

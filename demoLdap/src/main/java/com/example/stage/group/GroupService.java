@@ -1,6 +1,7 @@
 package com.example.stage.group;
 
 import com.example.stage.exceptions.InvalidUidException;
+import com.example.stage.exceptions.MemberAlreadyExistsException;
 import com.example.stage.group.dto.CreateGroupRequest;
 import com.example.stage.group.dto.GroupDto;
 import com.example.stage.organisation.OrganisationService;
@@ -16,6 +17,8 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.Name;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
@@ -152,12 +155,12 @@ public class GroupService {
         if(request.isAdmin()) permissions += "ROLE_ADMINSGROUP,";
         if(request.isGestionnaireUtilisateur()) permissions += "ROLE_GESTIONNAIREUTILISATEURS,";
         if(request.isGestionnaireOrganisation()) permissions += "ROLE_GESTIONNAIREORGANISATION,";
-        permissions=permissions.substring(0, permissions.length() - 1);
+        permissions= permissions.isEmpty() ?"":permissions.substring(0, permissions.length() - 1);
         DirContextAdapter context = new DirContextAdapter(dn);
         context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
         Map<String,String> orgDescription = organisationService.listOrganizations(true);
         context.setAttributeValue("cn", request.cn());
-        context.setAttributeValue("businessCategory",permissions);
+        if(!permissions.isEmpty()) {context.setAttributeValue("businessCategory",permissions);}
         // groupOfNames requires at least one member at creation time
         context.setAttributeValue("member", buildMemberDn(request.initialMemberUid()));
 
@@ -168,10 +171,42 @@ public class GroupService {
         Name dn = LdapNameBuilder.newInstance("ou=groups").add("cn", cn).build();
         ldapTemplate.unbind(dn);
     }
+    private boolean isMember(Name groupDn, String memberDn) {
+        AttributesMapper<Boolean> mapper = attrs -> {
+            Attribute members = attrs.get("member");
 
+            if (members == null) {
+                return false;
+            }
+
+            try {
+                NamingEnumeration<?> values = members.getAll();
+                while (values.hasMore()) {
+                    if (memberDn.equalsIgnoreCase((String) values.next())) {
+                        return true;
+                    }
+                }
+            } catch (NamingException e) {
+                throw new RuntimeException(e);
+            }
+
+            return false;
+        };
+
+        return ldapTemplate.lookup(groupDn, new String[]{"member"}, mapper);
+    }
     public void addMember(String groupCn, String uid) {
         if(!userService.uidExists(uid)){
             throw new InvalidUidException(uid);
+        }
+        String memberDn = buildMemberDn(uid);
+
+        Name groupDn = LdapNameBuilder.newInstance("ou=groups")
+                .add("cn", groupCn)
+                .build();
+
+        if (isMember(groupDn, memberDn)) {
+            throw new MemberAlreadyExistsException(uid, groupCn);
         }
         Name dn = LdapNameBuilder.newInstance("ou=groups").add("cn", groupCn).build();
         Attribute memberAttr = new BasicAttribute("member", buildMemberDn(uid));

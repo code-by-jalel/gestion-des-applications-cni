@@ -117,7 +117,6 @@ export class AdminUsersPage implements OnInit {
       },
       error: (err) => {
         this.message = err.error?.error;
-        // console.log(this.message);
         this.cdr.markForCheck();
       }
     });

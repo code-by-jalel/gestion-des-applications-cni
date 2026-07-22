@@ -5,14 +5,21 @@
 
     </div>
 
-    <button
-      (click)="toggleCreateForm()"
-      class="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition"
-      [class]="showCreateForm
-        ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-        : 'bg-slate-900 text-white hover:bg-slate-800'">
-      {{ showCreateForm ? 'Fermer' : '+ Nouveau groupe' }}
-    </button>
+    <div class="flex items-center gap-3">
+      <button (click)="openAddMembersPanel()"
+        class="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium bg-slate-700 text-white hover:bg-slate-600 transition">
+        Ajouter au application
+      </button>
+
+      <button
+        (click)="toggleCreateForm()"
+        class="inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition"
+        [class]="showCreateForm
+          ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          : 'bg-slate-900 text-white hover:bg-slate-800'">
+        {{ showCreateForm ? 'Fermer' : '+ Nouveau application' }}
+      </button>
+    </div>
   </header>
 
   @if (message) {
@@ -25,21 +32,76 @@
     </div>
   }
 
+  @if (showAddMembersPanel) {
+    <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0px_2px_15px_0px_rgba(0,0,0,0.08)] mb-6">
+      <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-sm font-semibold uppercase tracking-[0.05em] text-slate-600">Ajouter plusieurs utilisateurs à une application</h3>
+        <button (click)="showAddMembersPanel=false" class="text-sm text-slate-500 hover:text-slate-700">Fermer</button>
+      </div>
+
+      <div class="grid gap-3 md:grid-cols-2 mb-4">
+        <label class="flex flex-col gap-1">
+          <span class="text-xs font-medium text-slate-500">Application cible</span>
+          <select [(ngModel)]="targetGroupForAdd" class="rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white">
+            <option value="">Sélectionner une application</option>
+            @for (g of groups; track g.cn) {
+              <option [value]="g.cn">{{ g.cn }} ({{ g.o }})</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <div class="mb-3">
+        <label class="flex items-center gap-2 text-sm text-slate-600">
+          <input  type="checkbox" (change)="toggleSelectAll($event.target.checked)" />
+          Sélectionner tout
+        </label>
+      </div>
+
+      <div class="mb-3">
+        <input
+          type="search"
+          [(ngModel)]="memberSearch"
+          placeholder="Rechercher un utilisateur (uid, mail, nom...)"
+          class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
+      </div>
+
+      <div class="max-h-48 overflow-auto border rounded-lg p-2 mb-4">
+        @for (user of filteredUsersForAdd; track user.uid) {
+          <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded">
+            <input  type="checkbox" [checked]="selectedUsers[user.uid]" (change)="toggleSelectUser(user.uid)" />
+            <div class="text-sm">
+              <div class="font-medium text-black">{{ user.uid }}</div>
+              <div class="text-xs text-slate-400">{{ user.mail }}</div>
+            </div>
+          </label>
+        }
+        @if (filteredUsersForAdd.length === 0) {
+          <div class="text-sm text-slate-400 p-2">Aucun utilisateur trouvé.</div>
+        }
+      </div>
+
+      <div class="flex justify-end">
+        <button (click)="addSelectedUsersToGroup()" class="inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Ajouter la sélection</button>
+      </div>
+    </div>
+  }
+
 
 
   @if (showCreateForm) {
     <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0px_2px_15px_0px_rgba(0,0,0,0.08)]">
       <div class="mb-5 flex items-center justify-between gap-4">
         <div>
-          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Nouveau groupe</h3>
-          <p class="mt-2 text-sm text-slate-500">Crée un groupe et renseigne le premier membre si nécessaire.</p>
+          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-slate-400">Nouveau application</h3>
+          <p class="mt-2 text-sm text-slate-500">Crée une application et renseigne le premier membre si nécessaire.</p>
         </div>
       </div>
 
       <form [formGroup]="newGroup" (ngSubmit)="createGroup()">
         <div class="grid gap-3 md:grid-cols-2">
           <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-slate-500">Nom du groupe (cn)</span>
+            <span class="text-xs font-medium text-slate-500">Nom du l'application (cn)</span>
             <input
               formControlName="cn"
               placeholder="ex: developers"
@@ -55,7 +117,7 @@
           </label>
 
           <div class="md:col-span-2">
-            <p class="mb-2 text-xs font-medium text-slate-500">Rôles du groupe</p>
+            <p class="mb-2 text-xs font-medium text-slate-500">Rôles du l'application</p>
             <div class="grid gap-3 sm:grid-cols-2">
               <label class="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
                 <input tuiCheckbox type="checkbox" formControlName="ROLE_ADMINSGROUP" class="h-4 w-4 rounded border-slate-300 text-slate-800 focus:ring-slate-400" />
@@ -73,12 +135,12 @@
           </div>
         </div>
 
-        <p class="mt-4 text-xs text-slate-400">Un groupe LDAP nécessite au moins un membre à la création.</p>
+        <p class="mt-4 text-xs text-slate-400">Une application LDAP nécessite au moins un membre à la création.</p>
         <button
           type="submit"
           [disabled]="newGroup.invalid"
           class="mt-4 inline-flex items-center justify-center rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40">
-          Créer le groupe
+          Créer l'application
         </button>
       </form>
     </div>
@@ -96,7 +158,7 @@
         <input
           type="search"
           [(ngModel)]="searchText"
-          placeholder="Rechercher un groupe, un prénom, un nom ou une organisation..."
+          placeholder="Rechercher une application, un prénom, un nom ou une organisation..."
           class="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
       </label>
     </div>
@@ -105,7 +167,7 @@
       <table class="min-w-full border-separate border-spacing-0">
         <thead class="sticky top-0 z-10 bg-slate-50/95 backdrop-blur">
           <tr class="text-left text-xs uppercase tracking-[0.2em] text-slate-500">
-            <th class="border-b border-slate-200 px-5 py-3 font-semibold">Groupe</th>
+            <th class="border-b border-slate-200 px-5 py-3 font-semibold">Application</th>
             <th class="border-b border-slate-200 px-5 py-3 font-semibold">Prénom</th>
             <th class="border-b border-slate-200 px-5 py-3 font-semibold">Nom</th>
             <th class="border-b border-slate-200 px-5 py-3 font-semibold">Organisation</th>
@@ -138,7 +200,7 @@
                     type="button"
                     (click)="deleteGroup(row.groupCn)"
                     class="inline-flex items-center justify-center rounded-full bg-slate-100 px-3 py-2 text-xs font-medium text-slate-700 transition hover:bg-slate-200 mr-2">
-                    Supprimer le groupe
+                    Supprimer l'application
                   </button>
                   <button
                     type="button"

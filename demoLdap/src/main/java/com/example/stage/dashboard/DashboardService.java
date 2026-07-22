@@ -41,11 +41,12 @@ public class DashboardService {
                         getAllOrganisations(org.children() == null ? List.of() : org.children()).stream()))
                 .collect(Collectors.toSet());
     }
+
     public DashboardStats getStats(String adminStructure) {
-        Map<String,String> orgDescription = organisationService.listOrganizations(adminStructure,false);
-        List<OrganisationDto> orgOu = organisationService.getTree(adminStructure);
+        Map<String,String> orgDescription = organisationService.listAllOrgnisations();
+        List<OrganisationDto> orgOu = organisationService.getAllOrganisationTree();
         log.info(orgOu.toString());
-        Set<String> scope = getAllOrganisations(orgOu);
+        Set<String> scope = organisationService.listAllOrganisationsParentOnly();
         log.info(scope.toString());
         List<String> allUids = getUserUidsInScope(scope);
         int totalUsers = allUids.size();
@@ -56,17 +57,16 @@ public class DashboardService {
 
         int totalOrganisations = scope.size();
 
-
-        // 5 — users per organisation
-        List<OrgUserCount> usersByOrg = scope.stream()
+        List<OrgUserCount> usersByOrg = orgOu.stream()
                 .map(org -> {
-                    int count = countUsersInOrg(org);
-                    return new OrgUserCount(orgDescription.get(org), count);
+                    Set<String> children = organisationService.flattenOrganisations(List.of(org));
+
+                    int count = countUsersInOrg(children);
+
+                    return new OrgUserCount(org.description(), count);
                 })
                 .sorted(Comparator.comparingInt(OrgUserCount::count).reversed())
                 .collect(Collectors.toList());
-
-        // 6 — top groups by member count
         List<GroupMemberCount> topGroups = allGroups.stream()
                 .map(g -> new GroupMemberCount(g.cn(), g.members().size()))
                 .sorted(Comparator.comparingInt(GroupMemberCount::memberCount).reversed())
@@ -94,12 +94,23 @@ public class DashboardService {
         ).stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    private int countUsersInOrg(String org) {
+    private int countUsersInOrg(Set<String> organisations) {
+
+        if (organisations.isEmpty()) {
+            return 0;
+        }
+
+        String orgFilter = organisations.stream()
+                .map(org -> "(o=" + org + ")")
+                .collect(Collectors.joining());
+
+        String filter = "(&(objectclass=inetOrgPerson)(|" + orgFilter + "))";
+
         return ldapTemplate.search(
-                query().base("ou=users")
-                        .where("objectclass").is("inetOrgPerson")
-                        .and("o").is(org),
-                (AttributesMapper<String>) attrs -> (String) attrs.get("uid").get()
+                "ou=users",
+                filter,
+                (AttributesMapper<String>) attrs ->
+                        attrs.get("uid").get().toString()
         ).size();
     }
 }

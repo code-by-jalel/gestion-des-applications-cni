@@ -69,6 +69,10 @@ export class AdminGroupsPage implements OnInit {
     private cdr: ChangeDetectorRef,
     private organisationService: OrganisationService
   ) { }
+    showAddMembersPanel = false;
+    selectedUsers: Record<string, boolean> = {};
+    targetGroupForAdd = '';
+    memberSearch = '';
 
   ngOnInit() {
     this.loadGroups();
@@ -80,6 +84,60 @@ export class AdminGroupsPage implements OnInit {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  openAddMembersPanel() {
+    this.showAddMembersPanel = true;
+    if (this.users.length === 0) {
+      this.userService.listUsers().subscribe({
+        next: users => { this.users = users; this.cdr.markForCheck(); },
+        error: err => this.notify(`Échec du chargement des utilisateurs: ${err.status}`, 'error')
+      });
+    }
+  }
+
+  toggleSelectUser(uid: string) {
+    this.selectedUsers[uid] = !this.selectedUsers[uid];
+    this.cdr.markForCheck();
+  }
+
+  toggleSelectAll(checked: boolean) {
+    for (const u of this.users) this.selectedUsers[u.uid] = checked;
+    this.cdr.markForCheck();
+  }
+
+  get filteredUsersForAdd(): UserDto[] {
+    const term = this.memberSearch?.trim().toLowerCase();
+    if (!term) return this.users;
+    return this.users.filter(u =>
+      (u.uid || '').toLowerCase().includes(term)
+      || (u.mail || '').toLowerCase().includes(term)
+      || (u.cn || '').toLowerCase().includes(term)
+      || (u.prenom || '').toLowerCase().includes(term)
+      || (u.sn || '').toLowerCase().includes(term)
+      || (u.firstName || '').toLowerCase().includes(term)
+      || (u.lastName || '').toLowerCase().includes(term)
+    );
+  }
+
+  addSelectedUsersToGroup() {
+    if (!this.targetGroupForAdd) { this.notify('Sélectionner un groupe cible', 'error'); return; }
+    const uids = Object.keys(this.selectedUsers).filter(k => this.selectedUsers[k]);
+    if (uids.length === 0) { this.notify('Sélectionner au moins un utilisateur', 'error'); return; }
+
+    let remaining = uids.length;
+    for (const uid of uids) {
+      this.groupService.addMember(this.targetGroupForAdd, uid).subscribe({
+        next: () => {
+          this.notify(`${uid} ajouté à ${this.targetGroupForAdd}`, 'success');
+          remaining--; if (remaining === 0) { this.showAddMembersPanel = false; this.selectedUsers = {}; this.loadGroups(); }
+        },
+        error: err => {
+          this.notify(`Échec ajout ${uid}: ${err.status}`, 'error');
+          remaining--; if (remaining === 0) { this.showAddMembersPanel = false; this.selectedUsers = {}; this.loadGroups(); }
+        }
+      });
+    }
   }
 
   get filteredMemberRows(): GroupMemberRow[] {

@@ -12,7 +12,7 @@
     <div class="text-[20px] font-[family-name:var(--font-lato)] text-[var(--primary-subtitle-color)]">Menu</div>
 
     <div class="flex flex-col justify-start gap-2">
-        @if(roles.includes("ROLE_ADMINSGROUP") || roles.includes("ROLE_GESTIONNAIREUTILISATEURS")){
+        @if(roles.includes("ROLE_ADMINSGROUP")){
         <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
             routerLink="dashboard" routerLinkActive="menu-item-active">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -26,6 +26,8 @@
             <span class="font-[family-name:var(--font-lato)] text-[16px] font-semibold flex-1" routerLink="dashboard"
                 (click)="onclick()">Tableau de bord</span>
         </div>
+        }
+        @if(roles.includes("ROLE_ADMINSGROUP") || roles.includes("ROLE_GESTIONNAIREUTILISATEURS")){
         <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 border-l-[5px] border-l-transparent text-[var(--secondary-text-color)] hover:bg-[#F0F6FF] hover:text-[var(--primary-color)]"
             routerLink="admin/users" routerLinkActive="menu-item-active">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -74,5 +76,7 @@
                 >Logout</span>
         </div> -->
     </div>
-    <button class="w-[250px] bg-[#0F2A3F] text-white font-medium py-[2.5%] px-[8.5%] rounded-[10px] cursor-pointer self-end mt-auto" (click)="logout()">Se déconnecter</button>
+    <button
+        class="w-[250px] bg-[#0F2A3F] text-white font-medium py-[2.5%] px-[8.5%] rounded-[10px] cursor-pointer self-end mt-auto"
+        (click)="logout()">Se déconnecter</button>
 </div>

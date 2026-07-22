@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(error);
     }
+
     @ExceptionHandler(InvalidUidException.class)
     public ResponseEntity<Map<String,String>> handleInvalidUidException(InvalidUidException ex){
         Map<String,String> error = new HashMap<>();
@@ -42,4 +43,13 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(error);
     }
+    @ExceptionHandler(MemberAlreadyExistsException.class)
+    public ResponseEntity<Map<String,String>> handleMemberAlreadyExistsException(MemberAlreadyExistsException ex){
+        Map<String,String> error = new HashMap<>();
+        error.put("error",ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(error);
+    }
+
 }
