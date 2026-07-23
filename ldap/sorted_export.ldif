@@ -1,0 +1,458 @@
+dn: ou=users,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: ou=groups,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: structures
+
+dn: uid=user5,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 5
+sn: u
+givenName: 5
+mail: user5@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user5
+
+dn: uid=user9,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 9
+sn: u
+givenName: 9
+mail: user9@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user9
+
+dn: ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Tunisie
+
+dn: uid=user22,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 22
+sn: u
+givenName: 22
+mail: user22@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user22
+
+dn: uid=marwen,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: marwen
+sn: rezgui
+mail: marwen.rezgui@gmail.com
+uid: marwen
+
+dn: uid=user30,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 30
+sn: u
+givenName: 30
+mail: user30@gmail.com
+o: 300
+telephoneNumber: 88888888
+uid: user30
+
+dn: uid=user17,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 17
+sn: u
+givenName: 17
+mail: user17@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user17
+
+dn: uid=user8,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 8
+sn: u
+givenName: 8
+mail: user8@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user8
+
+dn: uid=user21,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 21
+sn: u
+givenName: 21
+mail: user21@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user21
+
+dn: uid=user1,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: jalel
+sn: jalel
+givenName: ben romdhane
+mail: jaleleddine.benromdhane@gmail.com
+o: 300
+telephoneNumber: 95774194
+uid: user1
+userPassword: 1234
+
+dn: uid=user3,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: User3
+sn: u3
+uid: user3
+
+dn: uid=user16,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 16
+sn: u
+givenName: 16
+mail: user16@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user16
+
+dn: uid=user6,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 6
+sn: u
+givenName: 6
+mail: user6@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user6
+
+dn: uid=user13,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 13
+sn: u
+givenName: 13
+mail: user13@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user13
+
+dn: uid=user4,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 4
+sn: u
+givenName: 4
+mail: user4@gmail.com
+o: 302.2
+telephoneNumber: 88888888
+uid: user4
+
+dn: uid=user11,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 11
+sn: u
+givenName: 11
+mail: user11@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user11
+
+dn: cn=RH,ou=groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: RH
+member: uid=user30,ou=users,dc=example,dc=com
+
+dn: uid=user15,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 15
+sn: u
+givenName: 15
+mail: user15@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user15
+
+dn: uid=user20,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 20
+sn: u
+givenName: 20
+mail: user20@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user20
+
+dn: uid=user23,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 23
+sn: u
+givenName: 23
+mail: user23@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user23
+
+dn: uid=user14,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 14
+sn: u
+givenName: 14
+mail: user14@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user14
+
+dn: cn=GestionnaireOrganisation,ou=groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: GestionnaireOrganisation
+member: uid=user1,ou=users,dc=example,dc=com
+
+dn: uid=user12,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 12
+sn: u
+givenName: 12
+mail: user12@gmail.com
+o: 304.1
+telephoneNumber: 88888888
+uid: user12
+
+dn: cn=gestion de stock,ou=groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: gestion de stock
+member: uid=user1,ou=users,dc=example,dc=com
+member: uid=user13,ou=users,dc=example,dc=com
+member: uid=user4,ou=users,dc=example,dc=com
+
+dn: uid=user19,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 19
+sn: u
+givenName: 19
+mail: user19@gmail.com
+o: 303
+telephoneNumber: 88888888
+uid: user19
+
+dn: uid=user18,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 18
+sn: u
+givenName: 18
+mail: user18@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user18
+
+dn: uid=user2,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: user2
+sn: u2
+uid: user2
+
+dn: uid=user10,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 10
+sn: u
+givenName: 10
+mail: user10@gmail.com
+o: 301.1
+telephoneNumber: 88888888
+uid: user10
+
+dn: cn=GestionnaireUtilisateurs,ou=groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: GestionnaireUtilisateurs
+member: uid=user1,ou=users,dc=example,dc=com
+member: uid=user10,ou=users,dc=example,dc=com
+member: uid=user30,ou=users,dc=example,dc=com
+businessCategory: ROLE_GESTIONNAIREUTILISATEURS
+o: 300
+
+dn: uid=user7,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: u 7
+sn: u
+givenName: 7
+mail: user7@gmail.com
+o: 301
+telephoneNumber: 88888888
+uid: user7
+
+dn: cn=adminsGroup,ou=groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: adminsGroup
+member: uid=user1,ou=users,dc=example,dc=com
+member: uid=user10,ou=users,dc=example,dc=com
+businessCategory: ROLE_ADMINSGROUP,ROLE_GESTIONNAIREUTILISATEURS
+o: 300
+
+dn: ou=200,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 200
+description:: 2YjYstin2LHYqSDYp9mE2KrYsdio2YrYqQ==
+
+dn: ou=400,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 400
+description:: 2YjYstin2LHYqSDYp9mE2KrZg9mG2YTZiNis2YrYpw==
+
+dn: ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 300
+description: MinistereTechnologiesCommunication
+
+dn: ou=301,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 301
+description: InspectionGenerale
+
+dn: ou=304,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 304
+description: DirectionGeneraleTechnologiesInformation
+
+dn: ou=401,ou=400,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 401
+description:: 2KfZhNio2LHZitivINin2YTYqtmI2YbYs9mK
+
+dn: ou=302,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 302
+description: DirectionGeneraleEconomieNumerique
+
+dn: ou=303,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 303
+description: Cabinet
+
+dn: ou=302.1,ou=302,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 302.1
+description: TransformationNumerique
+
+dn: ou=302.2,ou=302,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 302.2
+description: Innovation
+
+dn: ou=302.3,ou=302,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 302.3
+description: OpenData
+
+dn: ou=303.1,ou=303,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 303.1
+description: Conseillers
+
+dn: ou=303.2,ou=303,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 303.2
+description: Secretariat
+
+dn: ou=304.1,ou=304,ou=300,ou=Tunisie,ou=structures,dc=example,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: 304.1
+description: Infrastructure
+
