@@ -47,6 +47,12 @@ Les services disponibles :
 - Backend API : http://localhost:8081
 - LDAP : localhost:10389
 
+Pour s'authentifier en tant que admin:
+
+email: jaleleddine.benromdhane@gmail.com
+
+mdp:1234
+
 ## Arrêter le projet
 
 ```bash
