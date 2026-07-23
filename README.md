@@ -1,53 +1,62 @@
 # Stage CNI
 
+Application composée de :
+
+- Frontend Angular
+- Backend Spring Boot
+- Serveur LDAP ApacheDS
+
 ## Prérequis
 
-- Docker et Docker Compose
-- Facultatif pour un lancement en local :
-  - Java 21
-  - Node.js 20+
-  - npm
+Pour lancer le projet avec Docker, il faut uniquement :
 
-## Lancer avec Docker
+- Git
+- Docker Desktop (Windows/macOS) ou Docker Engine + Docker Compose (Linux)
 
-Depuis la racine du dépôt, démarrez toute la pile avec :
+Les outils suivants ne sont pas nécessaires :
+- Java
+- Maven
+- Node.js
+- npm
+- Angular CLI
+- LDAP
 
-```bash
-docker compose up --build
+## Structure du projet
+
+```
+stage/
+├── docker-compose.yml
+├── ldap/
+│   └── fichiers LDIF
+├── frontend/
+├── demoLdap/
+└── README.md
 ```
 
-Cela démarre :
+## Lancer le projet
+
+Depuis la racine du projet :
+
+```bash
+docker compose up -d --build
+```
+
+Les services disponibles :
 
 - Frontend : http://localhost
-- API backend : http://localhost:8081
+- Backend API : http://localhost:8081
 - LDAP : localhost:10389
 
-## Lancer en local
-
-Si vous souhaitez exécuter les applications sans Docker, démarrez chaque partie séparément.
-
-### Backend
+## Arrêter le projet
 
 ```bash
-cd demoLdap
-./mvnw spring-boot:run
+docker compose down
 ```
 
-Sous Windows, utilisez :
+Pour supprimer les données LDAP :
 
 ```bash
-cd demoLdap
-.\mvnw.cmd spring-boot:run
+docker compose down -v
 ```
 
-Le backend s’exécute sur le port `8080` dans le conteneur et est exposé sur `8081` avec Docker Compose.
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm start
-```
-
-L’application Angular utilise le serveur de développement par défaut lorsqu’elle est lancée en local.
+⚠️ Cette commande supprime le volume LDAP.
